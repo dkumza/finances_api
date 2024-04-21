@@ -28,11 +28,7 @@ export class UsersController {
 
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-    // // Check if the id is a valid mongoose id, recommended to do that in mw
-    // const isValidId = mongoose.Types.ObjectId.isValid(id);
-    // if (!isValidId) throw new HttpException('User not found', 400);
-
-    const found = this.userService.getUserById(id);
+    const found = await this.userService.getUserById(id);
     if (!found) throw new HttpException('User not found', 404);
     return found;
   }
@@ -48,13 +44,8 @@ export class UsersController {
     @Body(ValidationPipe)
     updateUserDto: UpdateUserDto,
   ) {
-    // Check if the id is a valid mongoose id, recommended to do that in mw
-    const isValidId = mongoose.Types.ObjectId.isValid(id);
-    if (!isValidId) throw new HttpException('User not found', 400);
-
-    const updated = await this.userService.updateUser(id, updateUserDto);
-    console.log('updated: ', updated);
-    if (!updated) throw new HttpException('User not found', 404);
-    return updated;
+    const found = await this.userService.updateUser(id, updateUserDto);
+    if (!found) throw new HttpException('User not found', 404);
+    return found;
   }
 }

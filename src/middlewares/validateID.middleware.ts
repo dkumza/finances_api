@@ -4,16 +4,16 @@ import {
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
-import { NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Types } from 'mongoose';
 
 @Injectable()
-export class isValidID implements NestMiddleware {
-  use(req: any, res: any, next: NextFunction) {
+export class validateID implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
     const id = req.params.id;
     if (id && !Types.ObjectId.isValid(id)) {
       console.log('bad id from MW: ', id);
-      throw new HttpException(`ID ${id} not found`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(`ID not found`, HttpStatus.BAD_REQUEST);
     }
 
     next();
