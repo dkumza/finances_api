@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Users } from 'src/schemas/Users.schema';
@@ -16,12 +16,13 @@ export class UsersService {
     return newUser.save();
   }
 
+  // exclude passwords from the responses
   getUserById(id: string) {
-    return this.usersModel.findById(id);
+    return this.usersModel.findById(id).select('-password').exec();
   }
 
   getAllUsers() {
-    return this.usersModel.find();
+    return this.usersModel.find().select('-password').exec();
   }
 
   // https://mongoosejs.com/docs/tutorials/findoneandupdate.html
