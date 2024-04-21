@@ -28,9 +28,9 @@ export class UsersController {
 
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-    // Check if the id is a valid mongoose id, recommended to do that in mw
-    const isValidId = mongoose.Types.ObjectId.isValid(id);
-    if (!isValidId) throw new HttpException('User not found', 400);
+    // // Check if the id is a valid mongoose id, recommended to do that in mw
+    // const isValidId = mongoose.Types.ObjectId.isValid(id);
+    // if (!isValidId) throw new HttpException('User not found', 400);
 
     const found = this.userService.getUserById(id);
     if (!found) throw new HttpException('User not found', 404);
