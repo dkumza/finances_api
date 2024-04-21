@@ -16,12 +16,13 @@ export class UsersService {
     return newUser.save();
   }
 
+  // exclude passwords from the responses
   getUserById(id: string) {
-    return this.usersModel.findById(id).exec();
+    return this.usersModel.findById(id).select('-password').exec();
   }
 
   getAllUsers() {
-    return this.usersModel.find();
+    return this.usersModel.find().select('-password').exec();
   }
 
   // https://mongoosejs.com/docs/tutorials/findoneandupdate.html
