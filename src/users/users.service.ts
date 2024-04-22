@@ -36,7 +36,6 @@ export class UsersService {
   }
 
   async getUserByUsername(username: string) {
-    // console.log('username @ getUserById service: ', username);
     return await this.usersModel.findOne({ username: username }).exec();
   }
 
