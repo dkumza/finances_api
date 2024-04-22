@@ -17,8 +17,19 @@ export class UsersService {
   }
 
   // exclude passwords from the responses
-  getUserById(id: string) {
-    return this.usersModel.findById(id).select('-password').exec();
+  // getUserById(id: string) {
+  //   console.log('id @ getUderById service: ', id);
+  //   return this.usersModel.findById(id).select('-password').exec();
+  // }
+
+  getUserByUsername(username: string) {
+    // console.log('username @ getUserById service: ', username);
+    return (
+      this.usersModel
+        .findOne({ username: username })
+        // .select('-password')
+        .exec()
+    );
   }
 
   getAllUsers() {

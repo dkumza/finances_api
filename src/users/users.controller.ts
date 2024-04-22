@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/CreateUser.dto';
-import mongoose from 'mongoose';
 import { hashPassword } from 'src/utils/pswUtils';
 import { UpdateUserDto } from './dto/UpdateUser.dto';
 
@@ -26,11 +25,21 @@ export class UsersController {
     await this.userService.createUser(user);
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') id: string) {
-    const found = await this.userService.getUserById(id);
+  // @Get(':id')
+  // async getUserById(@Param('id') id: string) {
+  //   const found = await this.userService.getUserById(id);
+  //   if (!found) throw new HttpException('User not found', 404);
+  //   return found;
+  // }
+
+  @Get(':username')
+  async getUser(@Param('username') username: string) {
+    const found = await this.userService.getUserByUsername(username);
+    // console.log('found: ', found);
     if (!found) throw new HttpException('User not found', 404);
-    return found;
+
+    const { password, ...result } = found.toObject(); // exl psw and convert to obj
+    return result;
   }
 
   @Get()
