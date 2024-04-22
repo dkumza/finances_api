@@ -14,10 +14,13 @@ import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/CreateUser.dto';
 import { hashPassword } from 'src/utils/pswUtils';
 import { UpdateUserDto } from './dto/UpdateUser.dto';
-import { JwtAuthGuard } from 'src/auth/auth.guards';
 import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/guards/roles.decorator';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
 
@@ -30,7 +33,6 @@ export class UsersController {
   }
 
   @Get(':username')
-  @UseGuards(JwtAuthGuard)
   async getUser(
     @Param('username') username: string,
     @Req() req: Request & { user: { username: string } },
@@ -50,14 +52,8 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  getAllUsers(@Req() req: Request & { user: { username: string } }) {
-    const { username: tokenUsername } = req.user;
-
-    // ! only with username darius can see all users
-    if (tokenUsername !== 'darius') {
-      throw new HttpException('Unauthorized', 401);
-    }
+  @Roles(['admin'])
+  getAllUsers() {
     return this.userService.getAllUsers();
   }
 

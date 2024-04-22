@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { UserRole } from './role.enum';
 
 @Schema({ timestamps: true })
 // https://docs.nestjs.com/techniques/mongodb#model-injection
@@ -12,7 +13,8 @@ export class Users {
   @Prop({ required: true })
   password: string;
 
-  @Prop
+  @Prop({ type: String, enum: UserRole, default: UserRole.USER })
+  role: UserRole;
 }
 
 export const usersSchema = SchemaFactory.createForClass(Users);
