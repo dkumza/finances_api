@@ -1,18 +1,24 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Get,
   HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/CreateUser.dto';
-import mongoose from 'mongoose';
-import { hashPassword } from 'src/utils/pswUtils';
 import { UpdateUserDto } from './dto/UpdateUser.dto';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/guards/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -20,32 +26,55 @@ export class UsersController {
 
   @Post()
   async createUsers(@Body(ValidationPipe) createUserDto: CreateUsersDto) {
-    const hashPsw = await hashPassword(createUserDto.password);
-    const user = { ...createUserDto, password: hashPsw };
-    console.log('createUserDto: ', createUserDto);
-    await this.userService.createUser(user);
+    return this.userService.createUser(createUserDto);
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') id: string) {
-    const found = await this.userService.getUserById(id);
-    if (!found) throw new HttpException('User not found', 404);
-    return found;
+  // GET return a user by username
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get(':username')
+  @Roles(['admin', 'staff', 'user'])
+  async getUser(
+    @Param('username') username: string,
+    @Req() req: Request & { user: { username: string; role: string } },
+  ) {
+    const { username: tokenUsername } = req.user;
+    const role = req.user.role;
+
+    if (tokenUsername === username || role === 'admin') {
+      const found = await this.userService.getUserByUsername(username);
+      if (!found) throw new HttpException('User not found', 404);
+
+      const { password, ...result } = found.toObject(); // exl psw and convert to obj
+      return result;
+    }
+
+    throw new HttpException('Unauthorized', 401);
   }
 
+  // GET return all users - only for admin and staff roles
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
+  @Roles(['admin'])
   getAllUsers() {
     return this.userService.getAllUsers();
   }
 
-  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch(':username')
+  @Roles(['admin', 'user'])
   async updateUser(
-    @Param('id') id: string,
+    @Param('username') username: string,
+    @Req() req: Request & { user: { username: string; role: string } },
     @Body(ValidationPipe)
     updateUserDto: UpdateUserDto,
   ) {
-    const found = await this.userService.updateUser(id, updateUserDto);
-    if (!found) throw new HttpException('User not found', 404);
-    return found;
+    const { username: tokenUsername } = req.user;
+    const role = req.user.role;
+
+    if (tokenUsername === username || role === 'admin') {
+      return await this.userService.updateUser(username, updateUserDto);
+    }
+
+    throw new HttpException('User not found', 404);
   }
 }
