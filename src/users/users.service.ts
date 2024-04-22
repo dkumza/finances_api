@@ -23,13 +23,7 @@ export class UsersService {
   // }
 
   getUserByUsername(username: string) {
-    // console.log('username @ getUserById service: ', username);
-    return (
-      this.usersModel
-        .findOne({ username: username })
-        // .select('-password')
-        .exec()
-    );
+    return this.usersModel.findOne({ username: username }).exec();
   }
 
   getAllUsers() {

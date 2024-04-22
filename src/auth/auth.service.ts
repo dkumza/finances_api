@@ -12,20 +12,12 @@ export class AuthService {
 
   async login(username: string, pass: string): Promise<any> {
     const user = await this.usersService.getUserByUsername(username);
-    console.log('user: ', user);
     if (!user || !(await checkPassword(pass, user.password))) {
-      console.log('user @ auth.controller, password do not match?: ', user);
-
       throw new UnauthorizedException();
     }
+
     const { password, ...result } = user;
-    // TODO - generate a JWT token and return it here
-    console.log('result @auth.service: ', result);
-    return result;
-    // const payload = { username: user.username, sub: user.id };
-    // return {
-    //   ...result,
-    //   access_token: this.jwtService.sign(payload),
-    // };
+    const payload = { username: user.username, sub: user.id };
+    return { accessToken: this.jwtService.sign(payload) };
   }
 }
