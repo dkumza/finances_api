@@ -6,12 +6,16 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/CreateUser.dto';
 import { hashPassword } from 'src/utils/pswUtils';
 import { UpdateUserDto } from './dto/UpdateUser.dto';
+import { JwtAuthGuard } from 'src/auth/auth.guards';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -25,15 +29,18 @@ export class UsersController {
     await this.userService.createUser(user);
   }
 
-  // @Get(':id')
-  // async getUserById(@Param('id') id: string) {
-  //   const found = await this.userService.getUserById(id);
-  //   if (!found) throw new HttpException('User not found', 404);
-  //   return found;
-  // }
-
   @Get(':username')
-  async getUser(@Param('username') username: string) {
+  @UseGuards(JwtAuthGuard)
+  async getUser(
+    @Param('username') username: string,
+    @Req() req: Request & { user: { username: string } },
+  ) {
+    // check if username is the same as the one in the token
+    const { username: tokenUsername } = req.user;
+    if (tokenUsername !== username) {
+      throw new HttpException('Unauthorized', 401);
+    }
+
     const found = await this.userService.getUserByUsername(username);
     // console.log('found: ', found);
     if (!found) throw new HttpException('User not found', 404);
@@ -58,3 +65,10 @@ export class UsersController {
     return found;
   }
 }
+
+// @Get(':id')
+// async getUserById(@Param('id') id: string) {
+//   const found = await this.userService.getUserById(id);
+//   if (!found) throw new HttpException('User not found', 404);
+//   return found;
+// }
