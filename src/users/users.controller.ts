@@ -50,7 +50,14 @@ export class UsersController {
   }
 
   @Get()
-  getAllUsers() {
+  @UseGuards(JwtAuthGuard)
+  getAllUsers(@Req() req: Request & { user: { username: string } }) {
+    const { username: tokenUsername } = req.user;
+
+    // ! only with username darius can see all users
+    if (tokenUsername !== 'darius') {
+      throw new HttpException('Unauthorized', 401);
+    }
     return this.userService.getAllUsers();
   }
 
