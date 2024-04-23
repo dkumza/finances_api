@@ -23,7 +23,10 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Post()
-  async createUsers(@Body(ValidationPipe) createUserDto: CreateUsersDto) {
+  async createUsers(
+    @Body(new ValidationPipe({ whitelist: true }))
+    createUserDto: CreateUsersDto,
+  ) {
     return this.userService.createUser(createUserDto);
   }
 
@@ -58,19 +61,21 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch(':username')
+  @Patch(':id')
   @Roles(['admin', 'user'])
   async updateUser(
-    @Param('username') username: string,
-    @Req() req: Request & { user: { username: string; role: string } },
-    @Body(ValidationPipe)
+    @Param('id') id: string,
+    @Req() req: Request & { user: { id: string; role: string } },
+    @Body(new ValidationPipe({ whitelist: true }))
     updateUserDto: UpdateUserDto,
   ) {
-    const { username: tokenUsername } = req.user;
+    const { id: tokenUsernameId } = req.user;
     const role = req.user.role;
 
-    if (tokenUsername === username || role === 'admin') {
-      return await this.userService.updateUser(username, updateUserDto);
+    if (tokenUsernameId === id || role === 'admin') {
+      return role === 'admin'
+        ? await this.userService.updateByAdmin(id, updateUserDto)
+        : await this.userService.updateUser(id, updateUserDto);
     }
 
     throw new HttpException('User not found', 404);

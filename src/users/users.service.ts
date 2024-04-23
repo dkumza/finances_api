@@ -50,6 +50,14 @@ export class UsersService {
 
   // https://mongoosejs.com/docs/tutorials/findoneandupdate.html
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    const { username, email, password } = updateUserDto;
+    const updateFields = { username, email, password };
+    return await this.usersModel.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+  }
+
+  async updateByAdmin(id: string, updateUserDto: UpdateUserDto) {
     return await this.usersModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
     });
