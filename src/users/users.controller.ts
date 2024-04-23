@@ -1,10 +1,8 @@
 import {
   Body,
-  ConflictException,
   Controller,
   Get,
   HttpException,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -25,23 +23,26 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Post()
-  async createUsers(@Body(ValidationPipe) createUserDto: CreateUsersDto) {
+  async createUsers(
+    @Body(new ValidationPipe({ whitelist: true }))
+    createUserDto: CreateUsersDto,
+  ) {
     return this.userService.createUser(createUserDto);
   }
 
-  // GET return a user by username
+  // GET return a user by ID
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get(':username')
+  @Get(':id')
   @Roles(['admin', 'staff', 'user'])
   async getUser(
-    @Param('username') username: string,
-    @Req() req: Request & { user: { username: string; role: string } },
+    @Param('id') id: string,
+    @Req() req: Request & { user: { id: string; role: string } },
   ) {
-    const { username: tokenUsername } = req.user;
+    const { id: tokenUserId } = req.user;
     const role = req.user.role;
 
-    if (tokenUsername === username || role === 'admin') {
-      const found = await this.userService.getUserByUsername(username);
+    if (tokenUserId === id || role === 'admin') {
+      const found = await this.userService.getUserById(id);
       if (!found) throw new HttpException('User not found', 404);
 
       const { password, ...result } = found.toObject(); // exl psw and convert to obj
@@ -60,19 +61,21 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch(':username')
+  @Patch(':id')
   @Roles(['admin', 'user'])
   async updateUser(
-    @Param('username') username: string,
-    @Req() req: Request & { user: { username: string; role: string } },
-    @Body(ValidationPipe)
+    @Param('id') id: string,
+    @Req() req: Request & { user: { id: string; role: string } },
+    @Body(new ValidationPipe({ whitelist: true }))
     updateUserDto: UpdateUserDto,
   ) {
-    const { username: tokenUsername } = req.user;
+    const { id: tokenUsernameId } = req.user;
     const role = req.user.role;
 
-    if (tokenUsername === username || role === 'admin') {
-      return await this.userService.updateUser(username, updateUserDto);
+    if (tokenUsernameId === id || role === 'admin') {
+      return role === 'admin'
+        ? await this.userService.updateByAdmin(id, updateUserDto)
+        : await this.userService.updateUser(id, updateUserDto);
     }
 
     throw new HttpException('User not found', 404);
