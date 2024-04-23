@@ -18,10 +18,3 @@ import { UsersController } from './users.controller';
   exports: [UsersService],
 })
 export class UsersModule {}
-
-// ! middleware implementation
-// export class UsersModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer.apply(validateID).forRoutes('users/:id');
-//   }
-// }

@@ -23,6 +23,7 @@ export class UsersService {
 
     // generate random username
     const randomUsername = uuidv4();
+    console.log('randomUsername: ', randomUsername);
 
     // hash password
     const hashPsw = await hashPassword(createUserDto.password);
@@ -35,8 +36,12 @@ export class UsersService {
     return await newUser.save();
   }
 
-  async getUserByUsername(username: string) {
-    return await this.usersModel.findOne({ username: username }).exec();
+  async getUserByEmail(email: string) {
+    return await this.usersModel.findOne({ email: email }).exec();
+  }
+
+  async getUserById(id: string) {
+    return await this.usersModel.findById(id);
   }
 
   async getAllUsers() {
@@ -50,9 +55,3 @@ export class UsersService {
     });
   }
 }
-
-// exclude passwords from the responses
-// getUserById(id: string) {
-//   console.log('id @ getUderById service: ', id);
-//   return this.usersModel.findById(id).select('-password').exec();
-// }

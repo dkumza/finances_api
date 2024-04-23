@@ -1,10 +1,8 @@
 import {
   Body,
-  ConflictException,
   Controller,
   Get,
   HttpException,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -29,19 +27,19 @@ export class UsersController {
     return this.userService.createUser(createUserDto);
   }
 
-  // GET return a user by username
+  // GET return a user by ID
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get(':username')
+  @Get(':id')
   @Roles(['admin', 'staff', 'user'])
   async getUser(
-    @Param('username') username: string,
-    @Req() req: Request & { user: { username: string; role: string } },
+    @Param('id') id: string,
+    @Req() req: Request & { user: { id: string; role: string } },
   ) {
-    const { username: tokenUsername } = req.user;
+    const { id: tokenUserId } = req.user;
     const role = req.user.role;
 
-    if (tokenUsername === username || role === 'admin') {
-      const found = await this.userService.getUserByUsername(username);
+    if (tokenUserId === id || role === 'admin') {
+      const found = await this.userService.getUserById(id);
       if (!found) throw new HttpException('User not found', 404);
 
       const { password, ...result } = found.toObject(); // exl psw and convert to obj
