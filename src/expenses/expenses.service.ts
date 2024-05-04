@@ -11,13 +11,16 @@ export class ExpensesService {
     @InjectModel(Expenses.name) private readonly expensesModel: Model<Expenses>,
   ) {}
 
-  async create(createExpenseDto: CreateExpenseDto) {
-    const newExpense = new this.expensesModel(createExpenseDto);
+  async create(createExpenseDto: CreateExpenseDto, userId: string) {
+    const newExpense = new this.expensesModel({
+      ...createExpenseDto,
+      createdBy: userId,
+    });
     return await newExpense.save();
   }
 
-  async findAll() {
-    return await this.expensesModel.find().exec();
+  async findAll(userId: string) {
+    return this.expensesModel.find({ createdBy: userId }).populate('createdBy');
   }
 
   async findOne(id: string) {

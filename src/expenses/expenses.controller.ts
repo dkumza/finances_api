@@ -6,23 +6,41 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 
+interface RequestWithUserID extends Request {
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  };
+}
+
+@UseGuards(JwtAuthGuard)
 @Controller('expenses')
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Post()
-  create(@Body() createExpenseDto: CreateExpenseDto) {
-    return this.expensesService.create(createExpenseDto);
+  create(
+    @Body() createExpenseDto: CreateExpenseDto,
+    @Req() request: RequestWithUserID,
+  ) {
+    const userId = request.user.id;
+    return this.expensesService.create(createExpenseDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.expensesService.findAll();
+  findAll(@Req() request: RequestWithUserID) {
+    const userId = request.user.id;
+    console.log('User ID from JWT: ', userId);
+    return this.expensesService.findAll(userId);
   }
 
   @Get(':id')
