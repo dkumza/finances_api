@@ -23,7 +23,7 @@ export class UsersService {
 
     // generate random username
     const randomUsername = uuidv4();
-    console.log('randomUsername: ', randomUsername);
+    // console.log('randomUsername: ', randomUsername);
 
     // hash password
     const hashPsw = await hashPassword(createUserDto.password);
@@ -33,7 +33,8 @@ export class UsersService {
       username: randomUsername,
       password: hashPsw,
     });
-    return await newUser.save();
+    await newUser.save();
+    return this.usersModel.findById(newUser._id).select('-password').exec();
   }
 
   async getUserByEmail(email: string) {
