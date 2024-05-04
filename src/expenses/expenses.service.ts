@@ -1,19 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { Expenses } from 'src/schemas/Expenses.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ExpensesService {
-  create(createExpenseDto: CreateExpenseDto) {
-    return 'This action adds a new expense';
+  constructor(
+    @InjectModel(Expenses.name) private readonly expensesModel: Model<Expenses>,
+  ) {}
+
+  async create(createExpenseDto: CreateExpenseDto) {
+    const newExpense = new this.expensesModel(createExpenseDto);
+    return await newExpense.save();
   }
 
-  findAll() {
-    return `This action returns all expenses`;
+  async findAll() {
+    return await this.expensesModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} expense`;
+  async findOne(id: string) {
+    const expense = await this.expensesModel.findById(id);
+    if (!expense) {
+      throw new NotFoundException({ message: 'Expense not found' });
+    }
+    return expense;
   }
 
   update(id: number, updateExpenseDto: UpdateExpenseDto) {
