@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Expenses } from 'src/schemas/Expenses.schema';
@@ -42,14 +38,22 @@ export class ExpensesService {
     if (!expense || expense.createdBy.toString() !== userId) {
       throw new NotFoundException({ message: 'Expense not found' });
     }
-
     // declare the properties that can be updated
     const { title, description, amount } = updateExpenseDto;
     Object.assign(expense, { title, description, amount });
     return await expense.save();
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} expense`;
+  async remove(id: string, userId: string) {
+    const result = await this.expensesModel.deleteOne({
+      _id: id,
+      createdBy: userId,
+    });
+    if (result.deletedCount === 0) {
+      throw new NotFoundException({
+        message: 'Expense not found',
+      });
+    }
+    return { message: 'Expense removed successfully' };
   }
 }
