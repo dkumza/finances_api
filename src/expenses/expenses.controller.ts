@@ -49,12 +49,18 @@ export class ExpensesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
-    return this.expensesService.update(+id, updateExpenseDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateExpenseDto: UpdateExpenseDto,
+    @Req() request: RequestWithUserID,
+  ) {
+    const userId = request.user.id;
+    return this.expensesService.update(id, updateExpenseDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.expensesService.remove(+id);
+  remove(@Param('id') id: string, @Req() request: RequestWithUserID) {
+    const userId = request.user.id;
+    return this.expensesService.remove(id, userId);
   }
 }

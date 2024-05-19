@@ -4,6 +4,7 @@ import { ExpensesController } from './expenses.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Expenses, expensesSchema } from 'src/schemas/Expenses.schema';
 import { validateID } from 'src/middlewares/validateID.middleware';
+// import { Users, usersSchema } from 'src/schemas/Users.schema';
 
 @Module({
   imports: [
@@ -12,6 +13,10 @@ import { validateID } from 'src/middlewares/validateID.middleware';
         name: Expenses.name,
         schema: expensesSchema,
       },
+      // {
+      //   name: Users.name,
+      //   schema: usersSchema,
+      // },
     ]),
   ],
   controllers: [ExpensesController],

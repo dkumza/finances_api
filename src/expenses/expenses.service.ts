@@ -20,7 +20,9 @@ export class ExpensesService {
   }
 
   async findAll(userId: string) {
-    return this.expensesModel.find({ createdBy: userId }).populate('createdBy');
+    return this.expensesModel
+      .find({ createdBy: userId })
+      .populate('createdBy', '_id');
   }
 
   async findOne(id: string) {
@@ -31,11 +33,27 @@ export class ExpensesService {
     return expense;
   }
 
-  update(id: number, updateExpenseDto: UpdateExpenseDto) {
-    return `This action updates a #${id} expense`;
+  async update(id: string, updateExpenseDto: UpdateExpenseDto, userId: string) {
+    const expense = await this.expensesModel.findById(id);
+    if (!expense || expense.createdBy.toString() !== userId) {
+      throw new NotFoundException({ message: 'Expense not found' });
+    }
+    // declare the properties that can be updated
+    const { title, description, amount } = updateExpenseDto;
+    Object.assign(expense, { title, description, amount });
+    return await expense.save();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} expense`;
+  async remove(id: string, userId: string) {
+    const result = await this.expensesModel.deleteOne({
+      _id: id,
+      createdBy: userId,
+    });
+    if (result.deletedCount === 0) {
+      throw new NotFoundException({
+        message: 'Expense not found',
+      });
+    }
+    return { message: 'Expense removed successfully' };
   }
 }
