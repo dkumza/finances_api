@@ -6,7 +6,7 @@ export type ExpensesDocument = Expenses & Document;
 @Schema({ timestamps: true })
 export class Expenses {
   // createdBy is a reference to the User schema
-  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'Users' })
   createdBy: Types.ObjectId;
 
   @Prop({ required: true })
