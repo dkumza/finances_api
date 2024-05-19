@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Expenses } from 'src/schemas/Expenses.schema';
@@ -20,7 +24,9 @@ export class ExpensesService {
   }
 
   async findAll(userId: string) {
-    return this.expensesModel.find({ createdBy: userId }).populate('createdBy');
+    return this.expensesModel
+      .find({ createdBy: userId })
+      .populate('createdBy', '_id');
   }
 
   async findOne(id: string) {
@@ -31,11 +37,24 @@ export class ExpensesService {
     return expense;
   }
 
-  update(id: number, updateExpenseDto: UpdateExpenseDto) {
-    return `This action updates a #${id} expense`;
+  async update(id: string, updateExpenseDto: UpdateExpenseDto, userId: string) {
+    const expense = await this.expensesModel.findById(id);
+    if (!expense || expense.createdBy.toString() !== userId) {
+      throw new NotFoundException({ message: 'Expense not found' });
+    }
+    // if (expense.createdBy.toString() !== userId) {
+    //   throw new UnauthorizedException({
+    //     message: 'Unauthorized',
+    //   });
+    // }
+
+    // declare the properties that can be updated
+    const { title, description, amount } = updateExpenseDto;
+    Object.assign(expense, { title, description, amount });
+    return await expense.save();
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} expense`;
   }
 }
