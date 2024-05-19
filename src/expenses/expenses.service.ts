@@ -42,11 +42,6 @@ export class ExpensesService {
     if (!expense || expense.createdBy.toString() !== userId) {
       throw new NotFoundException({ message: 'Expense not found' });
     }
-    // if (expense.createdBy.toString() !== userId) {
-    //   throw new UnauthorizedException({
-    //     message: 'Unauthorized',
-    //   });
-    // }
 
     // declare the properties that can be updated
     const { title, description, amount } = updateExpenseDto;
