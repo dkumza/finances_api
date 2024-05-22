@@ -15,6 +15,8 @@ export class Expenses {
     type: String,
     enum: Object.values(Category),
   })
+  category: string;
+
   @Prop({ required: true })
   title: string;
 

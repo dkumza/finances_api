@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Expenses } from 'src/schemas/Expenses.schema';
@@ -12,11 +16,18 @@ export class ExpensesService {
   ) {}
 
   async create(createExpenseDto: CreateExpenseDto, userId: string) {
-    const newExpense = new this.expensesModel({
-      ...createExpenseDto,
-      createdBy: userId,
-    });
-    return await newExpense.save();
+    try {
+      const newExpense = new this.expensesModel({
+        ...createExpenseDto,
+        createdBy: userId,
+      });
+      return await newExpense.save();
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
   }
 
   async findAll(userId: string) {
