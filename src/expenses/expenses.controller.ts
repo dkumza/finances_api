@@ -13,6 +13,7 @@ import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { Category } from 'src/schemas/exoebses.enum';
 
 interface RequestWithUserID extends Request {
   user: {
@@ -26,6 +27,11 @@ interface RequestWithUserID extends Request {
 @Controller('expenses')
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
+
+  @Get('categories')
+  getCategories() {
+    return Category;
+  }
 
   @Post()
   create(
