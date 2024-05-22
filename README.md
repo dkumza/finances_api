@@ -1,4 +1,5 @@
 ## api for finances-app
+Still in progress...
 
 front client can be found [here](https://github.com/dkumza/finances-front)
 
