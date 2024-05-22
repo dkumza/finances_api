@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Category } from './exoebses.enum';
 
 export type ExpensesDocument = Expenses & Document;
 
@@ -9,6 +10,11 @@ export class Expenses {
   @Prop({ required: true, type: Types.ObjectId, ref: 'Users' })
   createdBy: Types.ObjectId;
 
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(Category),
+  })
   @Prop({ required: true })
   title: string;
 
