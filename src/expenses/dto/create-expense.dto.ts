@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Category } from 'src/schemas/exoebses.enum';
+import { Category } from 'src/schemas/expenses.enum';
 
 export class CreateExpenseDto {
   @IsEnum(Category)

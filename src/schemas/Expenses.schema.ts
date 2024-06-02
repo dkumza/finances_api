@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Category } from './exoebses.enum';
+import { Category } from './expenses.enum';
 
 export type ExpensesDocument = Expenses & Document;
 
