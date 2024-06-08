@@ -7,9 +7,9 @@ import { Request } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('login')
+  @Post('token')
   login(@Body() body: any) {
-    return this.authService.login(body.email, body.password);
+    return this.authService.token(body.email, body.password);
   }
 
   @Get('status')

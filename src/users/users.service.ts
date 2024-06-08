@@ -34,7 +34,12 @@ export class UsersService {
       password: hashPsw,
     });
     await newUser.save();
-    return this.usersModel.findById(newUser._id).select('-password').exec();
+    const user = await this.usersModel
+      .findById(newUser._id)
+      .select('-password')
+      .exec();
+
+    return { message: 'User created successfully', user: user };
   }
 
   async getUserByEmail(email: string) {
