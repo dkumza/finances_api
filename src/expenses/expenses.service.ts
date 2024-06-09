@@ -50,8 +50,8 @@ export class ExpensesService {
       throw new NotFoundException({ message: 'Expense not found' });
     }
     // declare the properties that can be updated
-    const { title, description, amount } = updateExpenseDto;
-    Object.assign(expense, { title, description, amount });
+    const { description, amount } = updateExpenseDto;
+    Object.assign(expense, { description, amount });
     return await expense.save();
   }
 

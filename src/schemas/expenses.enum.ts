@@ -1,7 +1,7 @@
 export enum Category {
-  FOOD = 'FOOD',
-  TRANSPORT = 'TRANSPORT',
-  RENT = 'RENT',
-  SALARY = 'SALARY',
-  HEALTH = 'HEALTH',
+  FOOD = 'Food',
+  TRANSPORT = 'Transport',
+  RENT = 'Rent',
+  SALARY = 'Salary',
+  HEALTH = 'Health',
 }

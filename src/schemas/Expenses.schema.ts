@@ -17,8 +17,8 @@ export class Expenses {
   })
   category: string;
 
-  @Prop({ required: true })
-  title: string;
+  // @Prop({ required: true })
+  // title: string;
 
   @Prop({ required: true })
   description: string;

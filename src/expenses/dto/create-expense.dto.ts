@@ -5,9 +5,9 @@ export class CreateExpenseDto {
   @IsEnum(Category)
   category: Category;
 
-  @IsNotEmpty()
-  @IsString()
-  title: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // title: string;
 
   @IsNotEmpty()
   @IsString()
