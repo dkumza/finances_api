@@ -13,7 +13,7 @@ import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
-import { Category } from 'src/schemas/exoebses.enum';
+import { Category } from 'src/schemas/expenses.enum';
 
 interface RequestWithUserID extends Request {
   user: {
