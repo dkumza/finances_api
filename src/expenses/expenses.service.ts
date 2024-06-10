@@ -31,9 +31,29 @@ export class ExpensesService {
   }
 
   async findAll(userId: string) {
-    return this.expensesModel
+    const transactions = await this.expensesModel
       .find({ createdBy: userId })
-      .populate('createdBy', '_id');
+      .exec();
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    transactions.forEach((transaction) => {
+      if (transaction.amount > 0) {
+        totalIncome += transaction.amount;
+      } else {
+        totalExpense += transaction.amount;
+      }
+    });
+
+    const balance = totalIncome + totalExpense;
+
+    return {
+      transactions,
+      totalIncome,
+      totalExpense,
+      balance,
+    };
   }
 
   async findOne(id: string) {
