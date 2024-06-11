@@ -17,11 +17,11 @@ export class Expenses {
   })
   category: string;
 
-  // @Prop({ required: true })
-  // title: string;
-
   @Prop({ required: true })
   description: string;
+
+  @Prop({ required: true })
+  date: Date;
 
   @Prop({ required: true })
   amount: number;
