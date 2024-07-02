@@ -47,8 +47,16 @@ export class ExpensesService {
     });
 
     const balance = totalIncome + totalExpense;
+    const allIncomes = transactions.filter(
+      (transaction) => transaction.amount > 0,
+    );
+    const allExpenses = transactions.filter(
+      (transaction) => transaction.amount < 0,
+    );
 
     return {
+      allIncomes,
+      allExpenses,
       transactions,
       totalIncome,
       totalExpense,
