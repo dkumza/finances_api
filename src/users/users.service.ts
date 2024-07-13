@@ -47,7 +47,9 @@ export class UsersService {
   }
 
   async getUserById(id: string) {
-    return await this.usersModel.findById(id);
+    const user = await this.usersModel.findById(id);
+    console.log('User: ', user);
+    return user;
   }
 
   async getAllUsers() {
