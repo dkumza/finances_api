@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Users } from 'src/schemas/Users.schema';
@@ -46,9 +50,11 @@ export class UsersService {
     return await this.usersModel.findOne({ email: email }).exec();
   }
 
-  async getUserById(id: string) {
+  async getUserById(id: string): Promise<Users | undefined> {
     const user = await this.usersModel.findById(id);
-    console.log('User: ', user);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
     return user;
   }
 

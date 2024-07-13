@@ -38,17 +38,14 @@ export class ExpensesController {
   }
 
   @Post()
-  create(
+  async create(
     @Body() createExpenseDto: CreateExpenseDto,
     @Req() request: RequestWithUserID,
   ) {
     const userId = request.user.id;
-    //! check if user exists in db
-    const user = this.usersService.getUserById(userId);
-    console.log('User: ', user);
-    if (!user) {
-      return { message: 'Unauthorized' };
-    }
+    // check if user exists in db
+    await this.usersService.getUserById(userId);
+
     return this.expensesService.create(createExpenseDto, userId);
   }
 
