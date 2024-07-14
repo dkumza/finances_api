@@ -52,9 +52,6 @@ export class UsersService {
 
   async getUserById(id: string): Promise<Users | undefined> {
     const user = await this.usersModel.findById(id);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
     return user;
   }
 

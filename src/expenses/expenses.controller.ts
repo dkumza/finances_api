@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
@@ -16,7 +17,7 @@ import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { Category } from 'src/schemas/expenses.enum';
 import { UsersService } from 'src/users/users.service';
 
-interface RequestWithUserID extends Request {
+export interface RequestWithUserID extends Request {
   user: {
     id: string;
     username: string;
@@ -43,8 +44,12 @@ export class ExpensesController {
     @Req() request: RequestWithUserID,
   ) {
     const userId = request.user.id;
+
     // check if user exists in db
-    await this.usersService.getUserById(userId);
+    const user = await this.usersService.getUserById(userId);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
 
     return this.expensesService.create(createExpenseDto, userId);
   }
