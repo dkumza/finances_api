@@ -83,7 +83,7 @@ export class ExpensesService {
     return await expense.save();
   }
 
-  async remove(id: string, userId: string) {
+  async delete(id: string, userId: string) {
     const result = await this.expensesModel.deleteOne({
       _id: id,
       createdBy: userId,
@@ -93,6 +93,6 @@ export class ExpensesService {
         message: 'Expense not found',
       });
     }
-    return { message: 'Expense removed successfully' };
+    return { message: 'Expense deleted successfully' };
   }
 }

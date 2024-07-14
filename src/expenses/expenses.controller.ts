@@ -77,8 +77,8 @@ export class ExpensesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() request: RequestWithUserID) {
+  delete(@Param('id') id: string, @Req() request: RequestWithUserID) {
     const userId = request.user.id;
-    return this.expensesService.remove(id, userId);
+    return this.expensesService.delete(id, userId);
   }
 }
