@@ -9,6 +9,7 @@ import { ExpensesController } from './expenses.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Expenses, expensesSchema } from 'src/schemas/Expenses.schema';
 import { validateID } from 'src/middlewares/validateID.middleware';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { validateID } from 'src/middlewares/validateID.middleware';
         schema: expensesSchema,
       },
     ]),
+    UsersModule,
   ],
   controllers: [ExpensesController],
   providers: [ExpensesService],

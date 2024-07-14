@@ -45,7 +45,7 @@ export class UsersController {
       const found = await this.userService.getUserById(id);
       if (!found) throw new HttpException('User not found', 404);
 
-      const { password, ...result } = found.toObject(); // exl psw and convert to obj
+      const { password, ...result } = found; // exl psw and convert to obj
       return result;
     }
 
