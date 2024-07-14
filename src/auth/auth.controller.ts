@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/auth.guard';
-import { Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { RequestWithUserID } from 'src/expenses/expenses.controller';
 
