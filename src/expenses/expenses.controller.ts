@@ -50,15 +50,16 @@ export class ExpensesController {
     if (!user) {
       throw new UnauthorizedException();
     }
+    console.log('createExpenseDto: ', createExpenseDto);
 
     return this.expensesService.create(createExpenseDto, userId);
   }
 
-  @Get()
-  findAll(@Req() request: RequestWithUserID) {
+  @Get() // get all expenses by user id
+  findAllByUser(@Req() request: RequestWithUserID) {
     const userId = request.user.id;
     console.log('User ID from JWT: ', userId);
-    return this.expensesService.findAll(userId);
+    return this.expensesService.findAllByUser(userId);
   }
 
   @Get(':id')

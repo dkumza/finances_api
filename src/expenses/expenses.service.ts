@@ -30,20 +30,20 @@ export class ExpensesService {
     }
   }
 
-  async findAll(userId: string) {
+  async findAllByUser(userId: string) {
     const transactions = await this.expensesModel
       .find({ createdBy: userId })
       .exec();
 
     let totalIncome = 0;
     let totalExpense = 0;
+    let savings = 0;
 
     transactions.forEach((transaction) => {
-      if (transaction.amount > 0) {
-        totalIncome += transaction.amount;
-      } else {
+      if (transaction.amount > 0) totalIncome += transaction.amount;
+      if (transaction.amount < 0 && transaction.category !== 'Savings')
         totalExpense += transaction.amount;
-      }
+      if (transaction.category === 'Savings') savings += transaction.amount;
     });
 
     const balance = totalIncome + totalExpense;
@@ -57,10 +57,11 @@ export class ExpensesService {
     return {
       allIncomes,
       allExpenses,
+      balance,
       transactions,
       totalIncome,
       totalExpense,
-      balance,
+      savings,
     };
   }
 
