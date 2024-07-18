@@ -30,10 +30,8 @@ export class ExpensesService {
     }
   }
 
-  async findAllByUser(userId: string) {
-    const transactions = await this.expensesModel
-      .find({ createdBy: userId })
-      .exec();
+  async allTransactions() {
+    const transactions = await this.expensesModel.find().exec();
 
     let totalIncome = 0;
     let totalExpense = 0;

@@ -16,6 +16,7 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { Category } from 'src/schemas/expenses.enum';
 import { UsersService } from 'src/users/users.service';
+import { Roles } from 'src/auth/guards/roles.decorator';
 
 export interface RequestWithUserID extends Request {
   user: {
@@ -33,11 +34,13 @@ export class ExpensesController {
     private readonly usersService: UsersService,
   ) {}
 
+  // get all categories
   @Get('categories')
   getCategories() {
     return Category;
   }
 
+  // create new expense
   @Post()
   async create(
     @Body() createExpenseDto: CreateExpenseDto,
@@ -56,10 +59,11 @@ export class ExpensesController {
   }
 
   @Get() // get all expenses by user id
-  findAllByUser(@Req() request: RequestWithUserID) {
+  @Roles(['admin'])
+  transactions(@Req() request: RequestWithUserID) {
     const userId = request.user.id;
     console.log('User ID from JWT: ', userId);
-    return this.expensesService.findAllByUser(userId);
+    return this.expensesService.allTransactions();
   }
 
   @Get(':id')
