@@ -33,9 +33,9 @@ export class ExpensesService {
   async allTransactions() {
     const transactions = await this.expensesModel.find().exec();
 
-    let totalIncome = 0;
-    let totalExpense = 0;
-    let savings = 0;
+    let totalIncome = null;
+    let totalExpense = null;
+    let savings = null;
 
     transactions.forEach((transaction) => {
       if (transaction.amount > 0) totalIncome += transaction.amount;
@@ -64,11 +64,41 @@ export class ExpensesService {
   }
 
   async findOne(id: string) {
-    const expense = await this.expensesModel.findById(id);
-    if (!expense) {
-      throw new NotFoundException({ message: 'Expense not found' });
-    }
-    return expense;
+    console.log('id: ', id);
+    const transactions = await this.expensesModel
+      .find({ createdBy: id })
+      .exec();
+    console.log('transactions: ', transactions);
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let savings = 0;
+
+    transactions.forEach((transaction) => {
+      if (transaction.amount > 0) totalIncome += transaction.amount;
+      if (transaction.amount < 0 && transaction.category !== 'Savings')
+        totalExpense += transaction.amount;
+      if (transaction.category === 'Savings') savings += transaction.amount;
+    });
+
+    const balance = totalIncome + totalExpense;
+    const allIncomes = transactions.filter(
+      (transaction) => transaction.amount > 0,
+    );
+    const allExpenses = transactions.filter(
+      (transaction) => transaction.amount < 0,
+    );
+
+    console.log('allIncomes: ', allIncomes);
+    return {
+      allIncomes,
+      allExpenses,
+      balance,
+      transactions,
+      totalIncome,
+      totalExpense,
+      savings,
+    };
   }
 
   async update(id: string, updateExpenseDto: UpdateExpenseDto, userId: string) {

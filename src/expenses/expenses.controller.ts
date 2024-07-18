@@ -17,6 +17,7 @@ import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { Category } from 'src/schemas/expenses.enum';
 import { UsersService } from 'src/users/users.service';
 import { Roles } from 'src/auth/guards/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 export interface RequestWithUserID extends Request {
   user: {
@@ -26,7 +27,7 @@ export interface RequestWithUserID extends Request {
   };
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('expenses')
 export class ExpensesController {
   constructor(
@@ -36,12 +37,14 @@ export class ExpensesController {
 
   // get all categories
   @Get('categories')
+  @Roles(['user', 'admin'])
   getCategories() {
     return Category;
   }
 
   // create new expense
   @Post()
+  @Roles(['user', 'admin'])
   async create(
     @Body() createExpenseDto: CreateExpenseDto,
     @Req() request: RequestWithUserID,
@@ -60,15 +63,16 @@ export class ExpensesController {
 
   @Get() // get all expenses by user id
   @Roles(['admin'])
-  transactions(@Req() request: RequestWithUserID) {
-    const userId = request.user.id;
-    console.log('User ID from JWT: ', userId);
+  transactions() {
     return this.expensesService.allTransactions();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.expensesService.findOne(id);
+  @Roles(['user', 'admin'])
+  findOne(@Req() request: RequestWithUserID, @Param('id') id: string) {
+    const userId = request.user.id;
+    if (userId !== id) throw new UnauthorizedException();
+    return this.expensesService.findOne(userId);
   }
 
   @Patch(':id')
