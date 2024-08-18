@@ -25,7 +25,7 @@ export class AuthController {
     return this.authService.token(body.email, body.password);
   }
 
-  // GET to check if token is valid, also check if user exists in db
+  // GET to check if token is valid, also check if user exists in db .
   @Get()
   @UseGuards(JwtAuthGuard)
   async status(@Req() req: RequestWithUserID) {
