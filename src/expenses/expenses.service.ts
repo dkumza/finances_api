@@ -30,46 +30,80 @@ export class ExpensesService {
     }
   }
 
-  async findAll(userId: string) {
-    const transactions = await this.expensesModel
-      .find({ createdBy: userId })
-      .exec();
+  async allTransactions() {
+    const transactions = await this.expensesModel.find().exec();
 
-    let totalIncome = 0;
-    let totalExpense = 0;
+    let totalIncome = null;
+    let totalExpense = null;
+    let savings = null;
 
     transactions.forEach((transaction) => {
-      if (transaction.amount > 0) {
+      if (transaction.amount > 0 && transaction.category !== 'Savings')
         totalIncome += transaction.amount;
-      } else {
+      if (transaction.amount < 0 && transaction.category !== 'Savings')
         totalExpense += transaction.amount;
-      }
+      if (transaction.category === 'Savings') savings += transaction.amount;
     });
 
     const balance = totalIncome + totalExpense;
     const allIncomes = transactions.filter(
-      (transaction) => transaction.amount > 0,
+      (transaction) =>
+        transaction.amount > 0 && transaction.category !== 'Savings',
     );
-    const allExpenses = transactions.filter(
-      (transaction) => transaction.amount < 0,
-    );
+
+    const allExpenses = transactions.filter((transaction) => {
+      console.log('transaction of all incomes', transaction);
+      transaction.amount < 0;
+    });
 
     return {
       allIncomes,
       allExpenses,
+      balance,
       transactions,
       totalIncome,
       totalExpense,
-      balance,
+      savings,
     };
   }
 
   async findOne(id: string) {
-    const expense = await this.expensesModel.findById(id);
-    if (!expense) {
-      throw new NotFoundException({ message: 'Expense not found' });
-    }
-    return expense;
+    const transactions = await this.expensesModel
+      .find({ createdBy: id })
+      .exec();
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let savings = 0;
+
+    transactions.forEach((transaction) => {
+      if (transaction.amount > 0 && transaction.category !== 'Savings')
+        totalIncome += transaction.amount;
+      if (transaction.amount < 0 && transaction.category !== 'Savings')
+        totalExpense += transaction.amount;
+      if (transaction.category === 'Savings') savings += transaction.amount;
+    });
+
+    const balance = totalIncome + totalExpense;
+    const allIncomes = transactions.filter(
+      (transaction) =>
+        transaction.amount > 0 && transaction.category !== 'Savings',
+    );
+
+    const allExpenses = transactions.filter((transaction) => {
+      console.log('transaction of all incomes', transaction);
+      transaction.amount < 0;
+    });
+
+    return {
+      allIncomes,
+      allExpenses,
+      balance,
+      transactions,
+      totalIncome,
+      totalExpense,
+      savings,
+    };
   }
 
   async update(id: string, updateExpenseDto: UpdateExpenseDto, userId: string) {

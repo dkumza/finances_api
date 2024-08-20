@@ -30,10 +30,10 @@ export class UsersController {
     return this.userService.createUser(createUserDto);
   }
 
-  // GET return a user by ID
+  // GET return a user by ID - used to check if user exists
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
-  @Roles(['admin', 'staff', 'user'])
+  @Roles(['admin'])
   async getUser(
     @Param('id') id: string,
     @Req() req: Request & { user: { id: string; role: string } },
@@ -52,7 +52,7 @@ export class UsersController {
     throw new HttpException('Unauthorized', 401);
   }
 
-  // GET return all users - only for admin and staff roles
+  // GET return all users - only for admin role
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   @Roles(['admin'])
@@ -60,6 +60,7 @@ export class UsersController {
     return this.userService.getAllUsers();
   }
 
+  // PATCH update a user by ID - used to update user info - only for admin or user
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   @Roles(['admin', 'user'])

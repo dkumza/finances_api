@@ -19,12 +19,14 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Post('token')
+  // POST to get token by checking email and password
+  @Post()
   login(@Body() body: any) {
     return this.authService.token(body.email, body.password);
   }
 
-  @Get('status')
+  // GET to check if token is valid, also check if user exists in db .
+  @Get()
   @UseGuards(JwtAuthGuard)
   async status(@Req() req: RequestWithUserID) {
     const user = req.user;

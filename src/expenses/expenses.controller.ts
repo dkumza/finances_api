@@ -16,6 +16,8 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { Category } from 'src/schemas/expenses.enum';
 import { UsersService } from 'src/users/users.service';
+import { Roles } from 'src/auth/guards/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 export interface RequestWithUserID extends Request {
   user: {
@@ -25,7 +27,7 @@ export interface RequestWithUserID extends Request {
   };
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('expenses')
 export class ExpensesController {
   constructor(
@@ -33,12 +35,16 @@ export class ExpensesController {
     private readonly usersService: UsersService,
   ) {}
 
+  // get all categories
   @Get('categories')
+  @Roles(['user', 'admin'])
   getCategories() {
     return Category;
   }
 
+  // create new expense
   @Post()
+  @Roles(['user', 'admin'])
   async create(
     @Body() createExpenseDto: CreateExpenseDto,
     @Req() request: RequestWithUserID,
@@ -50,23 +56,26 @@ export class ExpensesController {
     if (!user) {
       throw new UnauthorizedException();
     }
-
+    console.log('createExpenseDto', createExpenseDto);
     return this.expensesService.create(createExpenseDto, userId);
   }
 
-  @Get()
-  findAll(@Req() request: RequestWithUserID) {
-    const userId = request.user.id;
-    console.log('User ID from JWT: ', userId);
-    return this.expensesService.findAll(userId);
+  @Get() // get all expenses by user id
+  @Roles(['admin'])
+  transactions() {
+    return this.expensesService.allTransactions();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.expensesService.findOne(id);
+  @Roles(['user', 'admin'])
+  findOne(@Req() request: RequestWithUserID, @Param('id') id: string) {
+    const userId = request.user.id;
+    if (userId !== id) throw new UnauthorizedException();
+    return this.expensesService.findOne(userId);
   }
 
   @Patch(':id')
+  @Roles(['user', 'admin'])
   update(
     @Param('id') id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
@@ -77,6 +86,7 @@ export class ExpensesController {
   }
 
   @Delete(':id')
+  @Roles(['user', 'admin'])
   delete(@Param('id') id: string, @Req() request: RequestWithUserID) {
     const userId = request.user.id;
     return this.expensesService.delete(id, userId);
