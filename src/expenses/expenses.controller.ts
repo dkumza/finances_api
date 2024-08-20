@@ -56,8 +56,7 @@ export class ExpensesController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    console.log('createExpenseDto: ', createExpenseDto);
-
+    console.log('createExpenseDto', createExpenseDto);
     return this.expensesService.create(createExpenseDto, userId);
   }
 
@@ -76,6 +75,7 @@ export class ExpensesController {
   }
 
   @Patch(':id')
+  @Roles(['user', 'admin'])
   update(
     @Param('id') id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
@@ -86,6 +86,7 @@ export class ExpensesController {
   }
 
   @Delete(':id')
+  @Roles(['user', 'admin'])
   delete(@Param('id') id: string, @Req() request: RequestWithUserID) {
     const userId = request.user.id;
     return this.expensesService.delete(id, userId);
