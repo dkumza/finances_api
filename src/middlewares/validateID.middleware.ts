@@ -14,7 +14,6 @@ export class validateID implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const id = req.params.id;
     if (id && !Types.ObjectId.isValid(id)) {
-      console.log('bad id from MW: ', id);
       throw new HttpException(`ID not found`, HttpStatus.BAD_REQUEST);
     }
 

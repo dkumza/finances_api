@@ -56,7 +56,6 @@ export class ExpensesController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    console.log('createExpenseDto', createExpenseDto);
     return this.expensesService.create(createExpenseDto, userId);
   }
 

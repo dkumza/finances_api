@@ -36,7 +36,6 @@ export class AuthController {
     if (!userFromDB) {
       throw new UnauthorizedException();
     }
-    console.log('user: ', userId);
     return userId;
   }
 }
