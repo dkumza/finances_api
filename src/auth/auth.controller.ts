@@ -22,6 +22,7 @@ export class AuthController {
   // POST to get token by checking email and password
   @Post()
   login(@Body() body: any) {
+    console.log('body', body);
     return this.authService.token(body.email, body.password);
   }
 

@@ -62,9 +62,9 @@ export class ExpensesService {
       allExpenses,
       balance,
       transactions,
-      totalIncome,
-      totalExpense,
-      savings,
+      totalIncome: parseFloat(totalIncome.toFixed(2)),
+      totalExpense: parseFloat(totalExpense.toFixed(2)),
+      savings: parseFloat(savings.toFixed(2)),
     };
   }
 
@@ -100,9 +100,9 @@ export class ExpensesService {
       allExpenses,
       balance,
       transactions,
-      totalIncome,
-      totalExpense,
-      savings,
+      totalIncome: parseFloat(totalIncome.toFixed(2)),
+      totalExpense: parseFloat(totalExpense.toFixed(2)),
+      savings: parseFloat(savings.toFixed(2)),
     };
   }
 
