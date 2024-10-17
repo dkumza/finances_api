@@ -1,10 +1,12 @@
 export enum Category {
+  BEUTY = 'Beauty',
   FOOD = 'Food',
-  HEALTH = 'Health & Beauty',
+  HEALTH = 'Health',
   HOME = 'Home',
   TRANSPORT = 'Transport',
-  SHOPPING = 'Shopping & Services',
-  OTHER = 'Other Expenses',
+  SHOPPING = 'Shopping',
+  SERVICES = 'Services',
+  OTHER = 'Other',
   SALARY = 'Salary',
   SAVINGS = 'Savings',
 }

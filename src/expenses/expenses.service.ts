@@ -39,8 +39,10 @@ export class ExpensesService {
 
     transactions.forEach((transaction) => {
       if (transaction.amount > 0 && transaction.category !== 'Savings')
+        // count total income sum
         totalIncome += transaction.amount;
       if (transaction.amount < 0 && transaction.category !== 'Savings')
+        // count total expense sum
         totalExpense += transaction.amount;
       if (transaction.category === 'Savings') savings += transaction.amount;
     });
@@ -51,19 +53,18 @@ export class ExpensesService {
         transaction.amount > 0 && transaction.category !== 'Savings',
     );
 
-    const allExpenses = transactions.filter((transaction) => {
-      console.log('transaction of all incomes', transaction);
-      transaction.amount < 0;
-    });
+    const allExpenses = transactions.filter(
+      (transaction) => transaction.amount < 0,
+    );
 
     return {
       allIncomes,
       allExpenses,
       balance,
       transactions,
-      totalIncome,
-      totalExpense,
-      savings,
+      totalIncome: parseFloat(totalIncome.toFixed(2)),
+      totalExpense: parseFloat(totalExpense.toFixed(2)),
+      savings: parseFloat(savings.toFixed(2)),
     };
   }
 
@@ -90,19 +91,18 @@ export class ExpensesService {
         transaction.amount > 0 && transaction.category !== 'Savings',
     );
 
-    const allExpenses = transactions.filter((transaction) => {
-      console.log('transaction of all incomes', transaction);
-      transaction.amount < 0;
-    });
+    const allExpenses = transactions.filter(
+      (transaction) => transaction.amount < 0,
+    );
 
     return {
       allIncomes,
       allExpenses,
       balance,
       transactions,
-      totalIncome,
-      totalExpense,
-      savings,
+      totalIncome: parseFloat(totalIncome.toFixed(2)),
+      totalExpense: parseFloat(totalExpense.toFixed(2)),
+      savings: parseFloat(savings.toFixed(2)),
     };
   }
 
